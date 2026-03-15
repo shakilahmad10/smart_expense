@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_expense/data/datasource/hive_service.dart';
 import 'package:smart_expense/models/expense_model.dart';
 
 void main() async {
@@ -8,6 +9,23 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ExpenseAdapter());
   await Hive.openBox<Expense>('expenses');
+
+  final hiveService = HiveService();
+  await hiveService.addExpense(
+    Expense(
+      id: "101",
+      amount: 1000,
+      description: "Dress",
+      category: "Shopping",
+      dateTime: DateTime.now(),
+      paymentMethod: "UPI",
+    ),
+  );
+
+  final list = hiveService.getAllExpenses();
+  for (var expense in list) {
+    print("LIST of EXPENSES: ${expense.id} ${expense.amount}");
+  }
 
   runApp(const MyApp());
 }
