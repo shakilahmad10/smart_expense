@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense/data/datasource/hive_service.dart';
+import 'package:smart_expense/data/repository/expense_repository.dart';
 import 'package:smart_expense/models/expense_model.dart';
 
 void main() async {
@@ -11,20 +12,22 @@ void main() async {
   await Hive.openBox<Expense>('expenses');
 
   final hiveService = HiveService();
-  await hiveService.addExpense(
+  final expenseRepository = ExpenseRepository(hiveService);
+  expenseRepository.addExpense(
     Expense(
-      id: "101",
-      amount: 1000,
-      description: "Dress",
-      category: "Shopping",
+      id: '102',
+      amount: 2000,
+      description: "Grocery",
+      category: "Grocery",
       dateTime: DateTime.now(),
-      paymentMethod: "UPI",
+      paymentMethod: "Cash",
     ),
   );
 
-  final list = hiveService.getAllExpenses();
+  final list = expenseRepository.getAllExpenses();
+  print("Repository Expense counts: ${list.length}");
   for (var expense in list) {
-    print("LIST of EXPENSES: ${expense.id} ${expense.amount}");
+    print("ID: ${expense.id}, Amount: ${expense.amount}");
   }
 
   runApp(const MyApp());
