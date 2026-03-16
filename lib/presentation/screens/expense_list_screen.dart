@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_expense/bloc/expense/expense_bloc.dart';
 import 'package:smart_expense/bloc/expense/expense_event.dart';
 import 'package:smart_expense/bloc/expense/expense_state.dart';
+import 'package:smart_expense/presentation/screens/edit_expense_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
   const ExpenseListScreen({super.key});
@@ -45,13 +46,35 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         style: TextStyle(color: Colors.black),
                       ),
                       subtitle: Text('${expense.dateTime.toLocal()}'),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red.shade300),
-                        onPressed: () {
-                          context.read<ExpenseBloc>().add(
-                            DeleteExpense(expense.id),
-                          );
-                        },
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit, color: Colors.black),
+                            onPressed: () {
+                              //edit expense
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditExpenseScreen(expense: expense),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.red.shade400,
+                            ),
+                            onPressed: () {
+                              //delete expense
+                              context.read<ExpenseBloc>().add(
+                                DeleteExpense(expense.id),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   );
