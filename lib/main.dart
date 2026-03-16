@@ -6,7 +6,6 @@ import 'package:smart_expense/bloc/expense/expense_bloc.dart';
 import 'package:smart_expense/data/datasource/hive_service.dart';
 import 'package:smart_expense/data/repository/expense_repository.dart';
 import 'package:smart_expense/models/expense_model.dart';
-import 'package:smart_expense/presentation/screens/expense_list_screen.dart';
 import 'package:smart_expense/presentation/screens/home_screen.dart';
 
 void main() async {

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_expense/bloc/expense/expense_bloc.dart';
 import 'package:smart_expense/bloc/expense/expense_event.dart';
 import 'package:smart_expense/bloc/expense/expense_state.dart';
-import 'package:smart_expense/presentation/screens/add_expense_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
   const ExpenseListScreen({super.key});
@@ -42,7 +41,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                     color: const Color.fromARGB(255, 6, 185, 221),
                     child: ListTile(
                       title: Text(
-                        '\₹ ${expense.amount} - ${expense.description}',
+                        '₹ ${expense.amount} - ${expense.description}',
                         style: TextStyle(color: Colors.black),
                       ),
                       subtitle: Text('${expense.dateTime.toLocal()}'),
