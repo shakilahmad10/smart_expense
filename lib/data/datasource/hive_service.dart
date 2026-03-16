@@ -15,8 +15,24 @@ class HiveService {
   }
 
   //Delete Expense
+  // Future<void> deleteExpense(String id) async {
+  //   await _expenseBox.delete(id);
+  // }
+
   Future<void> deleteExpense(String id) async {
-    await _expenseBox.delete(id);
+    final box = Hive.box<Expense>('expenses');
+
+    // Find the Hive key for this expense
+    final key = box.keys.firstWhere(
+      (k) => box.get(k)!.id == id,
+      orElse: () => null,
+    );
+
+    if (key != null) {
+      await box.delete(key);
+    } else {
+      print('Expense with id $id not found in Hive!');
+    }
   }
 
   //Update Expense

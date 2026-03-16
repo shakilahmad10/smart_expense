@@ -27,6 +27,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     });
 
     on<DeleteExpense>((event, emit) async {
+      print("Delete Event Received for ID: ${event.id}");
       try {
         await expenseRepository.deleteExpense(event.id);
         final expenses = expenseRepository.getAllExpenses();
