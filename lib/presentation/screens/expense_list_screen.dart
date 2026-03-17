@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:smart_expense/bloc/expense/expense_bloc.dart';
 import 'package:smart_expense/bloc/expense/expense_event.dart';
 import 'package:smart_expense/bloc/expense/expense_state.dart';
@@ -76,7 +77,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                               '₹ ${expense.amount} - ${expense.description}',
                               style: TextStyle(color: Colors.black),
                             ),
-                            subtitle: Text('${expense.dateTime.toLocal()}'),
+                            subtitle: Text(
+                              DateFormat(
+                                'dd MMM yyyy, hh:mm a',
+                              ).format(expense.dateTime.toLocal()),
+                            ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -316,8 +321,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   leading: Icon(Icons.calendar_today),
                   title: Text("Date (Newest First)"),
                   onTap: () {
-                    // context.read<ExpenseBloc>().add(SortExpensesByDateDesc());
-                    // Navigator.pop(context);
+                    context.read<ExpenseBloc>().add(SortExpensesByDateDesc());
+                    Navigator.pop(context);
                   },
                 ),
 
@@ -325,8 +330,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   leading: Icon(Icons.calendar_today_outlined),
                   title: Text("Date (Oldest First)"),
                   onTap: () {
-                    // context.read<ExpenseBloc>().add(SortExpensesByDateAsc());
-                    // Navigator.pop(context);
+                    context.read<ExpenseBloc>().add(SortExpensesByDateAsc());
+                    Navigator.pop(context);
                   },
                 ),
 
@@ -334,8 +339,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   leading: Icon(Icons.currency_rupee),
                   title: Text("Amount (High → Low)"),
                   onTap: () {
-                    // context.read<ExpenseBloc>().add(SortExpensesByAmountDesc());
-                    // Navigator.pop(context);
+                    context.read<ExpenseBloc>().add(SortExpensesByAmountDesc());
+                    Navigator.pop(context);
                   },
                 ),
 
@@ -343,8 +348,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   leading: Icon(Icons.currency_rupee_outlined),
                   title: Text("Amount (Low → High)"),
                   onTap: () {
-                    // context.read<ExpenseBloc>().add(SortExpensesByAmountAsc());
-                    // Navigator.pop(context);
+                    context.read<ExpenseBloc>().add(SortExpensesByAmountAsc());
+                    Navigator.pop(context);
                   },
                 ),
               ],

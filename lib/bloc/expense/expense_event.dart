@@ -33,3 +33,36 @@ class UpdateExpense extends ExpenseEvent {
   @override
   List<Object?> get props => [expense];
 }
+
+class SearchExpenses extends ExpenseEvent {
+  final String query;
+  const SearchExpenses(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}
+
+class FilterExpenses extends ExpenseEvent {
+  final String category;
+  const FilterExpenses(this.category);
+
+  @override
+  List<Object?> get props => [category];
+}
+
+class SortExpenses extends ExpenseEvent {
+  final String sortBy; // e.g., "date", "amount"
+  const SortExpenses(this.sortBy);
+
+  @override
+  List<Object?> get props => [sortBy];
+}
+
+//SORT EVENTS
+class SortExpensesByDateAsc extends ExpenseEvent {}
+
+class SortExpensesByDateDesc extends ExpenseEvent {}
+
+class SortExpensesByAmountAsc extends ExpenseEvent {}
+
+class SortExpensesByAmountDesc extends ExpenseEvent {}

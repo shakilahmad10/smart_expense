@@ -27,7 +27,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     });
 
     on<DeleteExpense>((event, emit) async {
-      print("Delete Event Received for ID: ${event.id}");
       try {
         await expenseRepository.deleteExpense(event.id);
         final expenses = expenseRepository.getAllExpenses();
@@ -44,6 +43,38 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
         emit(ExpenseLoaded(expenses));
       } catch (e) {
         emit(const ExpenseError("Failed to update expense"));
+      }
+    });
+
+    on<SortExpensesByDateAsc>((event, emit) {
+      if (state is ExpenseLoaded) {
+        final expenses = List.of((state as ExpenseLoaded).expenses);
+        expenses.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+        emit(ExpenseLoaded(expenses));
+      }
+    });
+
+    on<SortExpensesByDateDesc>((event, emit) {
+      if (state is ExpenseLoaded) {
+        final expenses = List.of((state as ExpenseLoaded).expenses);
+        expenses.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+        emit(ExpenseLoaded(expenses));
+      }
+    });
+
+    on<SortExpensesByAmountDesc>((event, emit) {
+      if (state is ExpenseLoaded) {
+        final expenses = List.of((state as ExpenseLoaded).expenses);
+        expenses.sort((a, b) => b.amount.compareTo(a.amount));
+        emit(ExpenseLoaded(expenses));
+      }
+    });
+
+    on<SortExpensesByAmountAsc>((event, emit) {
+      if (state is ExpenseLoaded) {
+        final expenses = List.of((state as ExpenseLoaded).expenses);
+        expenses.sort((a, b) => a.amount.compareTo(b.amount));
+        emit(ExpenseLoaded(expenses));
       }
     });
   }
