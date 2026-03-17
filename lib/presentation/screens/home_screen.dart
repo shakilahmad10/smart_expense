@@ -120,6 +120,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         return CustomGridItem(
                           title: item.title,
                           onTap: () {
+                            // TO OPEN PAGE AS A BOTTOMSHEET
+                            // showModalBottomSheet(
+                            //   context: context,
+                            //   shape: RoundedRectangleBorder(
+                            //     borderRadius: BorderRadius.vertical(
+                            //       top: Radius.circular(20),
+                            //     ),
+                            //   ),
+                            //   builder: (context) {
+                            //     return AddExpenseScreen();
+                            //   },
+                            // );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
