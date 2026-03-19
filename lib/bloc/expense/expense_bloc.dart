@@ -77,5 +77,44 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
         emit(ExpenseLoaded(expenses));
       }
     });
+
+    on<QuerySearchEvent>((event, emit) {
+      final expenses = expenseRepository.getAllExpenses();
+      final query = event.query.trim().toLowerCase();
+
+      if (query.isEmpty) {
+        emit(ExpenseLoaded(expenses));
+        return;
+      }
+      final filteredExpenses = expenses.where((expense) {
+        return expense.amount.toString().contains(query) ||
+            expense.category.toLowerCase().contains(query) ||
+            expense.description.toLowerCase().contains(query) ||
+            expense.dateTime.toString().toLowerCase().contains(query);
+      }).toList();
+      emit(ExpenseLoaded(filteredExpenses));
+    });
+
+    on<FilterExpensesEvent>((event, emit) {
+      final expenses = expenseRepository.getAllExpenses();
+
+      final filteredExpenses = expenses.where((expense) {
+        /// Category filter
+        final matchesCategory =
+            event.category == null || expense.category == event.category;
+
+        /// Min amount filter
+        final matchesMinAmount =
+            event.minAmount == null || expense.amount >= event.minAmount!;
+
+        /// Max amount filter
+        final matchesMaxAmount =
+            event.maxAmount == null || expense.amount <= event.maxAmount!;
+
+        return matchesCategory && matchesMinAmount && matchesMaxAmount;
+      }).toList();
+
+      emit(ExpenseLoaded(filteredExpenses));
+    });
   }
 }

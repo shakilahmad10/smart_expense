@@ -14,6 +14,10 @@ class ExpenseListScreen extends StatefulWidget {
 }
 
 class _ExpenseListScreenState extends State<ExpenseListScreen> {
+  String? selectedCategory;
+  double minAmount = 1;
+  double maxAmount = 20000;
+
   @override
   void initState() {
     super.initState();
@@ -39,8 +43,15 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   Expanded(
                     child: TextField(
                       controller: textController,
+                      onChanged: (value) {
+                        context.read<ExpenseBloc>().add(
+                          QuerySearchEvent(value),
+                        );
+                      },
                       decoration: InputDecoration(
                         hint: Text("Search"),
+                        filled: true,
+                        fillColor: Colors.white,
                         prefixIcon: Padding(
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                           child: Icon(Icons.search),
@@ -162,125 +173,186 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       context: context,
       isScrollControlled: true,
       builder: (context) {
-        TextEditingController minAmountController = TextEditingController();
-        TextEditingController maxAmountController = TextEditingController();
-
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 20,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-          ),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                /// Title
-                Text(
-                  "Filter Expenses",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-
-                SizedBox(height: 20),
-
-                /// Category Dropdown
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: "Category",
-                    border: OutlineInputBorder(
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+              ),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  /// Drag Handle
+                  Container(
+                    width: 40,
+                    height: 5,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  items: [
-                    DropdownMenuItem(value: "Food", child: Text("Food")),
-                    DropdownMenuItem(
-                      value: "Transport",
-                      child: Text("Transport"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Entertainment",
-                      child: Text("Entertainment"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Shopping",
-                      child: Text("Shopping"),
-                    ),
-                    DropdownMenuItem(value: "Bills", child: Text("Bills")),
-                    DropdownMenuItem(value: "Other", child: Text("Other")),
-                  ],
-                  onChanged: (value) {},
-                ),
 
-                SizedBox(height: 16),
+                  /// Title
+                  const Text(
+                    "Filter Expenses",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
 
-                /// Min Amount
-                TextField(
-                  controller: minAmountController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Min Amount",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                  const SizedBox(height: 24),
+
+                  /// Category Dropdown
+                  DropdownButtonFormField<String>(
+                    initialValue: selectedCategory,
+                    decoration: InputDecoration(
+                      labelText: "Category",
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: "Food", child: Text("Food")),
+                      DropdownMenuItem(
+                        value: "Transport",
+                        child: Text("Transport"),
+                      ),
+                      DropdownMenuItem(
+                        value: "Entertainment",
+                        child: Text("Entertainment"),
+                      ),
+                      DropdownMenuItem(
+                        value: "Shopping",
+                        child: Text("Shopping"),
+                      ),
+                      DropdownMenuItem(value: "Bills", child: Text("Bills")),
+                      DropdownMenuItem(value: "Other", child: Text("Other")),
+                    ],
+                    onChanged: (value) {
+                      selectedCategory = value;
+                    },
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  /// Amount Range Label
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Amount Range",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        "₹${minAmount.toInt()} - ₹${maxAmount.toInt()}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 81, 61, 170),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  /// Range Slider
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 4,
+                      overlayShape: SliderComponentShape.noOverlay,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 0,
+                      ),
+                    ),
+                    child: RangeSlider(
+                      min: 1,
+                      max: 20000,
+                      divisions: 200,
+                      labels: RangeLabels(
+                        minAmount.toStringAsFixed(0),
+                        maxAmount.toStringAsFixed(0),
+                      ),
+                      values: RangeValues(minAmount, maxAmount),
+                      onChanged: (RangeValues values) {
+                        setState(() {
+                          minAmount = values.start;
+                          maxAmount = values.end;
+                        });
+                      },
                     ),
                   ),
-                ),
 
-                SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
-                /// Max Amount
-                TextField(
-                  controller: maxAmountController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Max Amount",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-
-                Spacer(),
-
-                /// Buttons
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 0,
-                    vertical: 20,
-                  ),
-                  child: Row(
+                  /// Buttons
+                  Row(
                     children: [
                       Expanded(
                         child: SizedBox(
-                          height: 46,
+                          height: 48,
                           child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                            ),
                             onPressed: () {
+                              setState(() {
+                                selectedCategory = null;
+                                minAmount = 1;
+                                maxAmount = 20000;
+                              });
+                              context.read<ExpenseBloc>().add(LoadExpenses());
                               Navigator.pop(context);
                             },
-                            child: Text("Clear"),
+                            child: const Text("Clear"),
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
+
+                      const SizedBox(width: 12),
+
                       Expanded(
                         child: SizedBox(
-                          height: 46,
+                          height: 48,
                           child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                            ),
                             onPressed: () {
-                              // Apply filter logic here
+                              context.read<ExpenseBloc>().add(
+                                FilterExpensesEvent(
+                                  category: selectedCategory,
+                                  minAmount: minAmount,
+                                  maxAmount: maxAmount,
+                                ),
+                              );
+
                               Navigator.pop(context);
                             },
-                            child: Text("Apply"),
+                            child: const Text("Apply"),
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
+
+                  const SizedBox(height: 10),
+                ],
+              ),
+            );
+          },
         );
       },
     );

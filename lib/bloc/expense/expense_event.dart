@@ -58,7 +58,7 @@ class SortExpenses extends ExpenseEvent {
   List<Object?> get props => [sortBy];
 }
 
-//SORT EVENTS
+///Sorting Events
 class SortExpensesByDateAsc extends ExpenseEvent {}
 
 class SortExpensesByDateDesc extends ExpenseEvent {}
@@ -66,3 +66,22 @@ class SortExpensesByDateDesc extends ExpenseEvent {}
 class SortExpensesByAmountAsc extends ExpenseEvent {}
 
 class SortExpensesByAmountDesc extends ExpenseEvent {}
+
+///Query Search Event
+class QuerySearchEvent extends ExpenseEvent {
+  final String query;
+
+  const QuerySearchEvent(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}
+
+///Filter
+class FilterExpensesEvent extends ExpenseEvent {
+  final String? category;
+  final double? minAmount;
+  final double? maxAmount;
+
+  const FilterExpensesEvent({this.category, this.minAmount, this.maxAmount});
+}
