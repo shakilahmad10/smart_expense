@@ -9,6 +9,7 @@ import 'package:smart_expense/models/expense_model.dart';
 import 'package:smart_expense/presentation/screens/add_expense_screen.dart';
 import 'package:smart_expense/presentation/screens/analysis_chat_screen.dart';
 import 'package:smart_expense/presentation/screens/expense_list_screen.dart';
+import 'package:smart_expense/presentation/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -200,9 +201,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 25),
 
                   /// QUICK ACTIONS
-                  const Text(
-                    "Quick Actions",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Quick Actions",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SettingsScreen(),
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.settings, size: 28),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 12),
