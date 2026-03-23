@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:smart_expense/bloc/budget/budget_bloc.dart';
+import 'package:smart_expense/bloc/budget/budget_event.dart';
+import 'package:smart_expense/bloc/budget/budget_state.dart';
 import 'package:smart_expense/bloc/expense/expense_bloc.dart';
 import 'package:smart_expense/bloc/expense/expense_event.dart';
 import 'package:smart_expense/bloc/expense/expense_state.dart';
+import 'package:smart_expense/data/datasource/hive_service.dart';
 import 'package:smart_expense/models/expense_model.dart';
 import 'package:smart_expense/presentation/screens/add_expense_screen.dart';
 import 'package:smart_expense/presentation/screens/analysis_chat_screen.dart';
@@ -19,12 +23,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  double budgetLimit = 10000;
-
   @override
   void initState() {
     super.initState();
+
     context.read<ExpenseBloc>().add(LoadExpenses());
+    context.read<BudgetBloc>().add(LoadMonthlyBudget());
   }
 
   double calculateTotal(List<Expense> expenses) {
@@ -169,31 +173,68 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 20),
 
                   /// BUDGET PROGRESS
-                  const Text(
-                    "Monthly Budget",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  BlocBuilder<BudgetBloc, BudgetState>(
+                    builder: (context, state) {
+                      double budget = 0;
+
+                      if (state is BudgetLoaded) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Monthly Budget",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              formatCurrency(state.monthlyBudget),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return SizedBox();
+                    },
                   ),
 
                   const SizedBox(height: 10),
 
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      LinearProgressIndicator(
-                        value: total / budgetLimit > 1
-                            ? 1
-                            : total / budgetLimit,
-                        minHeight: 10,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  BlocBuilder<BudgetBloc, BudgetState>(
+                    builder: (context, budgetState) {
+                      double budgetLimit = 0;
 
-                      const SizedBox(height: 6),
+                      if (budgetState is BudgetLoaded) {
+                        budgetLimit = budgetState.monthlyBudget;
+                      }
 
-                      Text(
-                        "${formatCurrency(budgetLimit - total)} remaining",
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ],
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          LinearProgressIndicator(
+                            value: budgetLimit == 0
+                                ? 0
+                                : (total / budgetLimit > 1
+                                      ? 1
+                                      : total / budgetLimit),
+                            minHeight: 10,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+
+                          const SizedBox(height: 6),
+
+                          Text(
+                            "${formatCurrency(budgetLimit - total)} remaining",
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ],
+                      );
+                    },
                   ),
 
                   SizedBox(height: 25),

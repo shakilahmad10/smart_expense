@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_expense/bloc/budget/budget_bloc.dart';
+import 'package:smart_expense/bloc/budget/budget_event.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -200,6 +203,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                 if (budget != null) {
                   // Save budget to storage
+                  context.read<BudgetBloc>().add(SetMonthlyBudget(budget));
                   Navigator.pop(context);
                 }
               },
