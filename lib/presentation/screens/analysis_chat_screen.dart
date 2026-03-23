@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_expense/models/expense_model.dart';
@@ -22,6 +23,18 @@ class _AnalysisChartScreenState extends State<AnalysisChartScreen> {
 
     for (var expense in expenses) {
       data[expense.category] = (data[expense.category] ?? 0) + expense.amount;
+    }
+
+    return data;
+  }
+
+  Map<String, double> dailyTotals(List<Expense> expenses) {
+    final Map<String, double> data = {};
+
+    for (var expense in expenses) {
+      final date = DateFormat('dd MMM').format(expense.dateTime);
+
+      data[date] = (data[date] ?? 0) + expense.amount;
     }
 
     return data;
@@ -72,6 +85,37 @@ class _AnalysisChartScreenState extends State<AnalysisChartScreen> {
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            /// DAILY SPENDING BAR CHART
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Daily Spending",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    SizedBox(
+                      height: 250,
+                      child: buildDailyBarChart(widget.expenses),
                     ),
                   ],
                 ),
@@ -142,6 +186,47 @@ class _AnalysisChartScreenState extends State<AnalysisChartScreen> {
 
             const SizedBox(height: 30),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildDailyBarChart(List<Expense> expenses) {
+    final dailyData = dailyTotals(expenses);
+
+    if (dailyData.isEmpty) {
+      return const Center(child: Text("No data"));
+    }
+
+    int index = 0;
+
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        barGroups: dailyData.entries.map((entry) {
+          final group = BarChartGroupData(
+            x: index,
+            barRods: [
+              BarChartRodData(
+                toY: entry.value,
+                width: 18,
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ],
+          );
+          index++;
+          return group;
+        }).toList(),
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                final date = dailyData.keys.elementAt(value.toInt());
+                return Text(date, style: const TextStyle(fontSize: 10));
+              },
+            ),
+          ),
         ),
       ),
     );
