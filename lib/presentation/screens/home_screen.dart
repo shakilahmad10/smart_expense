@@ -175,8 +175,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   /// BUDGET PROGRESS
                   BlocBuilder<BudgetBloc, BudgetState>(
                     builder: (context, state) {
-                      double budget = 0;
-
                       if (state is BudgetLoaded) {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
