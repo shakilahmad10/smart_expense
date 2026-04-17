@@ -4,6 +4,9 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_expense/bloc/budget/budget_bloc.dart';
 import 'package:smart_expense/bloc/expense/expense_bloc.dart';
+import 'package:smart_expense/bloc/theme/theme_bloc.dart';
+import 'package:smart_expense/bloc/theme/theme_state.dart';
+import 'package:smart_expense/core/utils/app_theme.dart';
 import 'package:smart_expense/data/datasource/hive_service.dart';
 import 'package:smart_expense/data/repository/budget_repository.dart';
 import 'package:smart_expense/data/repository/expense_repository.dart';
@@ -33,12 +36,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => ThemeBloc()),
         BlocProvider(create: (_) => ExpenseBloc(expenseRepository)),
         BlocProvider(create: (_) => BudgetBloc(budgetRepository)),
       ],
-      child: const MaterialApp(
-        home: HomeScreen(),
-        debugShowCheckedModeBanner: false,
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, state) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: AppThemes.lightTheme,
+            darkTheme: AppThemes.darkTheme,
+            themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            home: const HomeScreen(),
+          );
+        },
       ),
     );
   }
