@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_expense/bloc/budget/budget_bloc.dart';
 import 'package:smart_expense/bloc/budget/budget_event.dart';
+import 'package:smart_expense/bloc/theme/theme_bloc.dart';
+import 'package:smart_expense/bloc/theme/theme_event.dart';
+import 'package:smart_expense/bloc/theme/theme_state.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -46,14 +49,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Divider(height: 1),
 
                   ///Dar Mode
-                  SwitchListTile(
-                    secondary: const Icon(Icons.dark_mode),
-                    title: const Text("Dark Mode"),
-                    value: isDarkMode,
-                    onChanged: (value) {
-                      setState(() {
-                        isDarkMode = !isDarkMode;
-                      });
+                  BlocBuilder<ThemeBloc, ThemeState>(
+                    builder: (context, state) {
+                      return SwitchListTile(
+                        secondary: const Icon(Icons.dark_mode),
+                        title: const Text("Dark Mode"),
+                        value: isDarkMode,
+                        onChanged: (value) {
+                          setState(() {
+                            context.read<ThemeBloc>().add(ToggleTheme());
+                          });
+                        },
+                      );
                     },
                   ),
                 ],

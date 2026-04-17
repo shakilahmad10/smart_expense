@@ -8,7 +8,6 @@ import 'package:smart_expense/bloc/budget/budget_state.dart';
 import 'package:smart_expense/bloc/expense/expense_bloc.dart';
 import 'package:smart_expense/bloc/expense/expense_event.dart';
 import 'package:smart_expense/bloc/expense/expense_state.dart';
-import 'package:smart_expense/data/datasource/hive_service.dart';
 import 'package:smart_expense/models/expense_model.dart';
 import 'package:smart_expense/presentation/screens/add_expense_screen.dart';
 import 'package:smart_expense/presentation/screens/analysis_chat_screen.dart';
@@ -36,7 +35,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String formatCurrency(double amount) {
-    final formatter = NumberFormat.currency(locale: 'en_IN', symbol: '₹');
+    final formatter = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹',
+      decimalDigits: 0,
+    );
     return formatter.format(amount);
   }
 
@@ -75,6 +78,10 @@ class _HomeScreenState extends State<HomeScreen> {
           if (state is ExpenseLoaded) {
             final expenses = state.expenses;
             final total = calculateTotal(expenses);
+            final recentExpenses = List.of(expenses)
+              ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
+
+            final top3 = recentExpenses.take(3).toList();
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -327,9 +334,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: expenses.length > 3 ? 3 : expenses.length,
+                    itemCount: top3.length,
                     itemBuilder: (context, index) {
-                      final expense = expenses[index];
+                      final expense = top3[index];
 
                       return Card(
                         child: ListTile(
